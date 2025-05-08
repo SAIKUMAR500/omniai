@@ -31,13 +31,13 @@
 
 ###🖥 Usage Examples
 Basic Commands
-''bash
 
-> weather Tokyo
-> news AI breakthroughs
-> generate code flask REST API
-> analyze diabetes dataset
-> play games
+
+- weather Tokyo
+- news AI breakthroughs
+- generate code flask REST API
+- analyze diabetes dataset
+- play games
 ### Prerequisites
 ```bash
 brew install python@3.8  # MacOS Python setup
