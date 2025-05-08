@@ -120,4 +120,39 @@ OpenWeatherMap
 NewsAPI.org
 SerpAPI
 🚨 Disclaimer: This project uses multiple third-party APIs that may have associated costs. Users are responsible for monitoring their own API usage.
+# 🤖 OmniAI Assistant 2.0
+
+**Your Intelligent Multi-Modal Swiss Army Knife**  
+*Powered by GPT-4 & Advanced API Integration*
+
+![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![API Integration](https://img.shields.io/badge/Integrated%20APIs-6-success)
+
+## 🌟 Key Features
+
+### 🧩 Multi-Modal Capabilities
+- **🎮 Interactive Gaming Suite**  
+  Rock-Paper-Scissors-Lizard-Spock | AI Trivia | Number Guesser
+- **📊 Smart Data Analysis**  
+  AutoML | Dataset Profiling | Visual Analytics
+- **🌐 Real-Time Services**  
+  Weather Forecasts | News Aggregation | Secure SMS
+- **💻 Developer Tools**  
+  AI Code Generation | Safe Execution Environment | Syntax Highlighting
+
+### 🔥 Unique Selling Points
+- GPT-4 Powered Natural Language Understanding
+- Enterprise-Grade API Security
+- Interactive Terminal UI with Animations
+- Auto-Generated Visualizations (PNG/PDF)
+- Cross-Platform Compatibility
+
+## 🚀 Quick Start
+
+### Prerequisites
+```bash
+brew install python@3.8  # MacOS Python setup
+python -m venv omniai-env
+source omniai-env/bin/activate
 
