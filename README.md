@@ -38,6 +38,22 @@ Basic Commands
 - generate code flask REST API
 - analyze diabetes dataset
 - play games
+
+-💬 You: generate code web scraper using BeautifulSoup
+
+-🤖 OmniAI: 
+-import requests
+-from bs4 import BeautifulSoup
+
+-def scrape(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    return {
+        'title': soup.title.text,
+        'links': [a['href'] for a in soup.find_all('a')]
+    }
+
+-Execute this code? (y/n)
 ### Prerequisites
 ```bash
 brew install python@3.8  # MacOS Python setup
