@@ -19,6 +19,7 @@
   Weather Forecasts | News Aggregation | Secure SMS
 - **💻 Developer Tools**  
   AI Code Generation | Safe Execution Environment | Syntax Highlighting
+![image](https://github.com/user-attachments/assets/07978fbc-a218-4548-a449-e7683ecb3f3e)
 
 ### 🔥 Unique Selling Points
 - GPT-4 Powered Natural Language Understanding
@@ -54,6 +55,29 @@ Basic Commands
     }
 
 -Execute this code? (y/n)
+
+📜 Roadmap
+Multi-API Integration (v1.0)
+
+Safe Code Execution (v2.0)
+
+Voice Interface (Q4 2024)
+
+PDF Report Generation (Q1 2025)
+
+Auto-ML Pipeline Builder (Q2 2025)
+
+⚠️ Important Notes
+API keys are never committed to version control
+
+Code execution runs in isolated environment
+
+SMS features require Twilio credits
+
+GPT-4 usage may incur OpenAI costs
+
+📄 License
+MIT License - See LICENSE for full text
 ### Prerequisites
 ```bash
 brew install python@3.8  # MacOS Python setup
