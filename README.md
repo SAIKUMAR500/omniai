@@ -35,7 +35,6 @@ brew install python@3.8  # MacOS Python setup
 python -m venv omniai-env
 source omniai-env/bin/activate
 
-'''bash
 git clone https://github.com/yourusername/OmniAI-Assistant.git
 cd OmniAI-Assistant
 pip install -r requirements.txt
@@ -43,7 +42,7 @@ pip install -r requirements.txt
 Configuration
 Create .env file with:
 
-'''ini
+ini
 OPENAI_API_KEY=your_key_here
 TWILIO_SID=your_twilio_sid
 TWILIO_TOKEN=your_twilio_token
