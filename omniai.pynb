@@ -1,0 +1,554 @@
+import os
+import re
+import sys
+import json
+import time
+import random
+import requests
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import subprocess
+from sklearn import datasets
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, mean_squared_error
+from openai import OpenAI
+from twilio.rest import Client
+from serpapi.google_search import GoogleSearch
+from datetime import datetime
+from colorama import Fore, Back, Style, init
+from pyfiglet import Figlet
+import platform
+
+# Initialize colorama
+init(autoreset=True)
+
+# ========== CONFIGURATION ==========
+API_KEYS = {
+    "OPENAI": "openai_key",
+    "TWILIO_SID": "twillo key",
+    "TWILIO_TOKEN": "token",
+    "SERPAPI": "serp_api_key",
+    "OPENWEATHER": "weather_api_key",
+    "NEWSAPI": "news_key"
+}
+
+# ========== INTERACTIVE UI COMPONENTS ==========
+class InteractiveUI:
+    @staticmethod
+    def welcome_banner():
+        f = Figlet(font='slant')
+        print(Fore.CYAN + f.renderText('AI Assistant 10.0'))
+        print(Fore.YELLOW + "🌟 Your Personal Multimodal Assistant 🌟")
+        print(Fore.GREEN + "\n" + "="*60)
+        print(Fore.MAGENTA + f"🚀 System Status: {platform.system()} {platform.release()}")
+        print(Fore.MAGENTA + f"🕒 Current Time: {time.strftime('%H:%M:%S')}")
+        print(Fore.GREEN + "="*60)
+        
+    @staticmethod
+    def animated_thinking():
+        frames = ["🧠💡", "💡✨", "✨🚀", "🚀🌌", "🌌🧠"]
+        for frame in frames:
+            print(f"\r{frame} Processing...", end="")
+            time.sleep(0.3)
+        print()
+    
+    @staticmethod
+    def help_menu():
+        print(Fore.CYAN + "\n🔍 " + Fore.WHITE + "HELP MENU:")
+        categories = {
+            "🎮 Games": ["Type 'play games'", "1. Rock-Paper-Scissors-Lizard-Spock", "2. Number Guesser", "3. AI Trivia"],
+            "📊 Data Analysis": ["Type 'analyze data'", "Available datasets: Iris, Diabetes, Breast Cancer"],
+            "💻 Code Generation": ["Type 'generate code'", "Example: 'generate code web scraper using BeautifulSoup'"],
+            "🌤️ Weather": ["Type 'weather [location]'", "Example: 'weather Tokyo'"],
+            "📰 News": ["Type 'news [topic]'", "Example: 'news AI breakthroughs'"],
+            "📱 SMS": ["Type 'send sms to [number] message [text]'", "Example: 'send sms to +1234567890 message Hello!'"],
+            "🔎 Web Search": ["Type 'search [query]'", "Example: 'search latest Python updates'"]
+        }
+        for category, items in categories.items():
+            print(Fore.YELLOW + f"\n{category}:")
+            for item in items:
+                print(Fore.WHITE + f"  {item}")
+        print(Fore.GREEN + "\nTIP: Try chatting naturally! I understand casual requests 😊")
+
+# ========== GAMING AGENT ==========
+class GamingAgent:
+    def __init__(self):
+        self.scores = {"wins": 0, "losses": 0, "draws": 0}
+        self.streak = 0
+        self.last_activity = time.time()
+
+    def show_menu(self):
+        return (
+            "\n🎮 Game Center:\n"
+            "1. Rock-Paper-Scissors-Lizard-Spock\n"
+            "2. Number Guesser (1-100)\n"
+            "3. AI Trivia Challenge\n"
+            "4. View Stats\n"
+            "0. Exit to Main\n"
+        )
+
+    def play_rps(self):
+        choices = {
+            "1": ("rock", "🗿"),
+            "2": ("paper", "📄"),
+            "3": ("scissors", "✂️"),
+            "4": ("lizard", "🦎"),
+            "5": ("spock", "🖖")
+        }
+        
+        print("\nChoose your weapon:")
+        for k, v in choices.items():
+            print(f"{k}. {v[1]} {v[0].title()}")
+            
+        user = self._get_choice(choices)
+        computer = random.choice(list(choices.values()))
+        
+        print(f"\n{user[1]} vs {computer[1]}")
+        
+        rules = {
+            "rock": ["scissors", "lizard"],
+            "paper": ["rock", "spock"],
+            "scissors": ["paper", "lizard"],
+            "lizard": ["paper", "spock"],
+            "spock": ["rock", "scissors"]
+        }
+        
+        if user[0] == computer[0]:
+            print("\n✨ Draw!")
+            self.scores["draws"] += 1
+        elif computer[0] in rules[user[0]]:
+            print("\n🎉 You win!")
+            self.scores["wins"] += 1
+            self.streak += 1
+        else:
+            print("\n💥 Computer wins!")
+            self.scores["losses"] += 1
+            self.streak = 0
+            
+        self._show_animation("fireworks" if user[0] == computer[0] else "battle")
+
+    def play_number_guesser(self):
+        secret = random.randint(1, 100)
+        attempts = 0
+        max_attempts = 7
+        
+        print(f"\nGuess the number (1-100) in {max_attempts} tries!")
+        
+        while attempts < max_attempts:
+            try:
+                guess = int(input(f"\nAttempt {attempts+1}/{max_attempts}: "))
+                if guess == secret:
+                    print(f"\n🎉 Correct! Number was {secret}")
+                    self.scores["wins"] += 1
+                    self.streak += 1
+                    self._show_animation("celebration")
+                    return
+                print("🔼 Higher!" if guess < secret else "🔽 Lower!")
+                attempts += 1
+            except:
+                print("📛 Invalid number!")
+        
+        print(f"\n💥 Out of tries! Number was {secret}")
+        self.scores["losses"] += 1
+        self.streak = 0
+        self._show_animation("explosion")
+
+    def play_trivia(self):
+        try:
+            response = requests.get("https://opentdb.com/api.php?amount=1")
+            question = response.json()["results"][0]
+        except:
+            question = {
+                "question": "What is the capital of France?",
+                "correct_answer": "Paris",
+                "incorrect_answers": ["London", "Berlin", "Madrid"]
+            }
+        
+        print(f"\n{question['question']}")
+        answers = question['incorrect_answers'] + [question['correct_answer']]
+        random.shuffle(answers)
+        
+        for i, ans in enumerate(answers, 1):
+            print(f"{i}. {ans}")
+            
+        choice = self._get_choice({str(i+1): ans for i, ans in enumerate(answers)})
+        
+        if choice == question['correct_answer']:
+            print("\n✅ Correct!")
+            self.scores["wins"] += 1
+            self.streak += 1
+            self._show_animation("stars")
+        else:
+            print(f"\n❌ Wrong! Correct: {question['correct_answer']}")
+            self.scores["losses"] += 1
+            self.streak = 0
+
+    def _show_animation(self, name: str):
+        animations = {
+            "fireworks": ["✨", "🎆", "🎇"],
+            "battle": ["⚔️", "💥", "🔥"],
+            "celebration": ["🎉", "🎊", "🎈"],
+            "explosion": ["💣", "💥", "🌋"],
+            "stars": ["🌟", "⭐", "🌠"]
+        }
+        for frame in animations.get(name, ["✨"]):
+            print(frame, end=" ", flush=True)
+            time.sleep(0.3)
+        print()
+
+    def _get_choice(self, options: dict):
+        while True:
+            choice = input("> ").strip()
+            if choice in options:
+                return options[choice]
+            print("Invalid choice!")
+
+# ========== DATA ANALYSIS AGENT ==========
+class DataAnalysisAgent:
+    def __init__(self):
+        self.datasets = {
+            '1': ('Iris', datasets.load_iris, 'classification'),
+            '2': ('Diabetes', datasets.load_diabetes, 'regression'),
+            '3': ('Breast Cancer', datasets.load_breast_cancer, 'classification')
+        }
+
+    def analyze(self, choice: str):
+        loader = self.datasets[choice][1]
+        data = loader()
+        X = pd.DataFrame(data.data, columns=data.feature_names)
+        y = pd.Series(data.target)
+        
+        print(f"\n📊 Analyzing {self.datasets[choice][0]} dataset")
+        self._show_distributions(X, y)
+        self._show_correlations(X)
+        return self._train_model(X, y)
+
+    def _show_distributions(self, X, y):
+        plt.figure(figsize=(10, 5))
+        if len(y.unique()) < 10:
+            sns.countplot(x=y)
+            plt.title("Class Distribution")
+        else:
+            sns.histplot(y, kde=True)
+            plt.title("Target Distribution")
+        plt.show()
+
+    def _show_correlations(self, X):
+        plt.figure(figsize=(12, 8))
+        sns.heatmap(X.corr(), annot=True, cmap='coolwarm')
+        plt.title("Feature Correlations")
+        plt.show()
+
+    def _train_model(self, X, y):
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+        if len(y.unique()) < 10:
+            model = RandomForestClassifier()
+        else:
+            model = linearRegressor()
+        model.fit(X_train, y_train)
+        return model.score(X_test, y_test)
+
+# ========== WEATHER AGENT ==========
+class WeatherAgent:
+    @staticmethod
+    def get_weather(location: str) -> str:
+        try:
+            url = f"http://api.openweathermap.org/data/2.5/weather?q={location}&units=metric&appid={API_KEYS['OPENWEATHER']}"
+            response = requests.get(url)
+            data = response.json()
+            
+            if data['cod'] != 200:
+                return f"❌ Error: {data['message']}"
+            
+            main = data['main']
+            weather = data['weather'][0]
+            sys = data['sys']
+            
+            return (
+                f"🌤️ Weather in {data['name']}, {sys['country']}:\n"
+                f"🌡️ Temperature: {main['temp']}°C (Feels like {main['feels_like']}°C)\n"
+                f"📉 {weather['description'].title()}\n"
+                f"💧 Humidity: {main['humidity']}%\n"
+                f"🌬️ Wind: {data['wind']['speed']} m/s\n"
+                f"🌅 Sunrise: {datetime.fromtimestamp(sys['sunrise']).strftime('%H:%M')}\n"
+                f"🌇 Sunset: {datetime.fromtimestamp(sys['sunset']).strftime('%H:%M')}"
+            )
+        except Exception as e:
+            return f"🚨 Weather API error: {str(e)}"
+
+# ========== NEWS AGENT ==========
+class NewsAgent:
+    @staticmethod
+    def get_news(query: str = "general", country: str = "us") -> str:
+        try:
+            if query.lower() in ["general", "headlines"]:
+                url = f"https://newsapi.org/v2/top-headlines?country={country}&apiKey={API_KEYS['NEWSAPI']}"
+            else:
+                url = f"https://newsapi.org/v2/everything?q={query}&sortBy=publishedAt&apiKey={API_KEYS['NEWSAPI']}"
+            
+            response = requests.get(url)
+            data = response.json()
+            
+            if data['status'] != "ok":
+                return f"❌ News API error: {data.get('message', 'Unknown error')}"
+            
+            articles = data['articles'][:5]
+            news_items = []
+            
+            for i, article in enumerate(articles, 1):
+                source = article['source']['name']
+                title = re.sub(r'\s+', ' ', article['title']).strip()
+                news_items.append(f"{i}. [{source}] {title}")
+                
+            return "📰 Top News:\n" + "\n".join(news_items)
+            
+        except Exception as e:
+            return f"🚨 News API error: {str(e)}"
+
+# ========== MAIN AI ASSISTANT ==========
+class AIAssistant:
+    def __init__(self):
+        self.client = OpenAI(api_key=API_KEYS["OPENAI"])
+        self.twilio = Client(API_KEYS["TWILIO_SID"], API_KEYS["TWILIO_TOKEN"])
+        self.games = GamingAgent()
+        self.data = DataAnalysisAgent()
+        self.weather = WeatherAgent()
+        self.news = NewsAgent()
+        self.mode = "main"
+        self.stats = {"searches": 0, "messages": 0, "analysis": 0}
+        self.generated_code = ""
+        self.ui = InteractiveUI()
+
+    def process(self, command: str):
+        try:
+            self.stats["messages"] += 1
+            
+            # Show processing animation
+            self.ui.animated_thinking()
+
+            # Mode handling
+            if self.mode == "games":
+                return self._handle_games(command)
+            if self.mode == "data":
+                return self._handle_data(command)
+            if self.mode == "code_gen":
+                code = self._generate_code(command)
+                self.generated_code = code
+                self.mode = "code_gen_confirm"
+                return self._colorize_code_output(code)
+            if self.mode == "code_gen_confirm":
+                return self._handle_code_execution(command)
+
+            # Main command processing
+            command_lower = command.lower()
+            
+            if any(word in command_lower for word in ["game", "play"]):
+                self.mode = "games"
+                print(Fore.GREEN + "🎮 Entering Game Center!")
+                return self.games.show_menu()
+                
+            if "analyze" in command_lower:
+                self.mode = "data"
+                print(Fore.BLUE + "📊 Let's explore some datasets!")
+                return "Choose dataset:\n1. Iris 🌸\n2. Diabetes 🩸\n3. Breast Cancer 🎗️"
+                
+            if "generate code" in command_lower:
+                self.mode = "code_gen"
+                print(Fore.MAGENTA + "💻 Ready to code! What should I create?")
+                print(Fore.YELLOW + "Examples:\n- 'Python script to download YouTube videos'\n- 'Web scraper using BeautifulSoup'\n- 'Flask REST API starter'")
+                return ""
+                
+            if "weather" in command_lower:
+                location = re.sub(r'weather|in|for|please', '', command_lower, flags=re.IGNORECASE).strip()
+                if not location:
+                    return Fore.RED + "🌧️ Please specify a location (e.g. 'weather in London')"
+                print(Fore.CYAN + f"⛅ Checking weather for {location.title()}...")
+                return self.weather.get_weather(location)
+                
+            if "news" in command_lower:
+                query = re.sub(r'news|about|for', '', command_lower, flags=re.IGNORECASE).strip()
+                print(Fore.BLUE + f"📡 Scanning news sources for '{query}'..." if query else "📰 Checking top headlines...")
+                return self.news.get_news(query if query else "general")
+                
+            if any(word in command_lower for word in ["help", "assist", "support"]):
+                self.ui.help_menu()
+                return ""
+                
+            if "search" in command_lower:
+                query = command_lower.replace("search", "").strip()
+                print(Fore.YELLOW + f"🔍 Searching the web for '{query}'...")
+                return self._search(query)
+                
+            if any(word in command_lower for word in ["sms", "text"]):
+                return self._send_sms(command)
+                
+            return self._chat_response(command)
+            
+        except Exception as e:
+            return Fore.RED + f"🚨 Error: {str(e)}"
+
+    def _handle_games(self, command: str):
+        if command == "1": 
+            self.games.play_rps()
+        elif command == "2": 
+            self.games.play_number_guesser()
+        elif command == "3": 
+            self.games.play_trivia()
+        elif command == "4": 
+            print(f"\n🏆 Wins: {self.games.scores['wins']}")
+            print(f"💔 Losses: {self.games.scores['losses']}")
+            print(f"🤝 Draws: {self.games.scores['draws']}")
+            print(f"🔥 Streak: {self.games.streak}")
+        elif command == "0": 
+            self.mode = "main"
+            return "Returning to main menu..."
+        return self.games.show_menu()
+
+    def _handle_data(self, command: str):
+        if command in self.data.datasets:
+            score = self.data.analyze(command)
+            self.mode = "main"
+            return f"Model Accuracy: {score:.2%}"
+        return "Invalid dataset choice!"
+
+    def _search(self, query: str):
+        results = GoogleSearch({
+            "engine": "google",
+            "q": query,
+            "api_key": API_KEYS["SERPAPI"]
+        }).get_dict()
+        return "\n".join([f"{i+1}. {res['title']}" for i, res in enumerate(results['organic_results'][:3])])
+
+    def _send_sms(self, text: str):
+        phone = re.search(r'\+\d{10,}', text)
+        message = re.split(r'to|message', text, flags=re.IGNORECASE)[-1].strip()
+        
+        if not phone:
+            return "❌ Include phone number (e.g. +1234567890)"
+            
+        self.twilio.messages.create(
+            body=message,
+            from_='+15513621323',
+            to=phone.group()
+        )
+        return f"✅ SMS sent to {phone.group()}"
+
+    def _chat_response(self, prompt: str):
+        response = self.client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.choices[0].message.content
+
+    def _generate_code(self, prompt: str) -> str:
+        response = self.client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are an expert Python programmer. Generate ONLY executable Python code. Do not include explanations. Add 'if __name__ == '__main__':' if appropriate."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=1000
+        )
+        raw_code = response.choices[0].message.content
+        code_blocks = []
+        in_code_block = False
+        current_block = []
+        for line in raw_code.split('\n'):
+            if line.strip().startswith('```python'):
+                in_code_block = True
+                continue
+            if in_code_block and line.strip().startswith('```'):
+                code_blocks.append('\n'.join(current_block))
+                current_block = []
+                in_code_block = False
+                continue
+            if in_code_block:
+                current_block.append(line)
+        return code_blocks[0] if code_blocks else raw_code
+
+    def _execute_code_safely(self, code: str) -> str:
+        try:
+            with open("generated_code.py", "w") as f:
+                f.write(code)
+            
+            result = subprocess.run(
+                [sys.executable, "generated_code.py"],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            output = "\nExecution Output:\n" + result.stdout
+            if result.stderr:
+                output += "\nErrors:\n" + result.stderr
+            
+            os.remove("generated_code.py")
+            return output
+        except subprocess.TimeoutExpired:
+            return "Execution timed out after 30 seconds."
+        except Exception as e:
+            return f"Execution failed: {str(e)}"
+
+    def _colorize_code_output(self, code: str) -> str:
+        highlighted = ""
+        keywords = ["def", "class", "return", "import", "from", "try", "except"]
+        for line in code.split('\n'):
+            if any(kw in line for kw in keywords):
+                highlighted += Fore.BLUE + line + "\n"
+            elif "if __name__" in line:
+                highlighted += Fore.YELLOW + line + "\n"
+            else:
+                highlighted += Fore.WHITE + line + "\n"
+        return highlighted + Fore.GREEN + "\nExecute this code? (y/n)"
+
+    def _handle_code_execution(self, command: str) -> str:
+        if command == 'y':
+            output = self._execute_code_safely(self.generated_code)
+            self.mode = "main"
+            return output
+        else:
+            self.mode = "main"
+            return "Code not executed."
+
+# ========== COMMAND LINE INTERFACE ==========
+if __name__ == "__main__":
+    assistant = AIAssistant()
+    assistant.ui.welcome_banner()
+    
+    # Display initial tips
+    tips = [
+        "💡 Try 'weather London' for current weather conditions",
+        "💡 Say 'news technology' for latest tech updates",
+        "💡 Ask 'generate code flask web app' for instant code",
+        "💡 Type 'help' anytime for assistance"
+    ]
+    print(Fore.YELLOW + "\n" + "\n".join(tips) + "\n")
+    
+    while True:
+        try:
+            cmd = input(Fore.MAGENTA + "\n💬 You: " + Fore.WHITE).strip()
+            if not cmd:
+                continue
+                
+            if cmd.lower() in ["exit", "quit", "bye"]:
+                print(Fore.RED + "\n👋 Goodbye! Come back anytime!")
+                break
+                
+            response = assistant.process(cmd)
+            if response:
+                print(Fore.GREEN + "\n🤖 Assistant:", end=" ")
+                print(response)
+            
+            if assistant.mode not in ["main"]:
+                print(Fore.YELLOW + "(Enter '0' to return to main menu)")
+                
+        except KeyboardInterrupt:
+            print(Fore.RED + "\n🔒 Session saved safely!")
+            break
+        except Exception as e:
+            print(Fore.RED + f"🚑 Critical error: {str(e)}")
