@@ -28,8 +28,8 @@
 - Auto-Generated Visualizations (PNG/PDF)
 - Cross-Platform Compatibility
 
-🌱 Initial Stage - Foundation Building
-*(Weeks 1-3)*
+###🌱 Initial Stage - Foundation Building
+*(dayss 1-3)*
 Key Focus: Core Architecture & Basic Features
 
 ✅ Established project structure with modular design
@@ -47,6 +47,7 @@ Challenges Overcome:
 -CLI interface performance optimization
 
 -Initial API rate limiting issues
+
 🧑💻 Middle Stage - Feature Expansion
 *(Weeks 4-8)*
 Key Milestones:
