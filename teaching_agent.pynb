@@ -1,0 +1,159 @@
+import openai
+import os
+import json
+import re
+
+# Initialize OpenAI API
+openai.api_key = ("api_key")
+
+# Combined Curriculum with Math and ML
+CURRICULUM = [
+    {
+        "module": 1,
+        "topic": "Mathematics Fundamentals",
+        "learning_outcomes": ["Linear Algebra", "Calculus", "Probability"],
+        "type": "math",
+        "quiz": False
+    },
+    {
+        "module": 2,
+        "topic": "Introduction to ML",
+        "learning_outcomes": ["ML Basics", "Supervised vs Unsupervised"],
+        "type": "ml",
+        "quiz": True
+    },
+    {
+        "module": 3,
+        "topic": "Linear Regression",
+        "learning_outcomes": ["Cost Function", "Gradient Descent"],
+        "type": "ml",
+        "quiz": True
+    }
+]
+
+PROGRESS_FILE = "progress.json"
+
+def load_progress():
+    try:
+        with open(PROGRESS_FILE, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {"current_module": 0, "quiz_scores": {}, "math_skills": {}}
+
+def save_progress(progress):
+    with open(PROGRESS_FILE, "w") as f:
+        json.dump(progress, f)
+
+def generate_response(messages):
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages,
+        temperature=0.7
+    )
+    return response.choices[0].message.content
+
+def math_expert(question):
+    system_prompt = """You are a mathematics professor. For any question:
+1. Explain concepts with mathematical notation
+2. Provide step-by-step derivations
+3. Give real-world applications
+4. Create practice problems with solutions
+5. Use Markdown and LaTeX formatting"""
+    return generate_response([
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": question}
+    ])
+
+def handle_math_input(user_input):
+    math_triggers = r'\b(solve|calculate|prove|derivative|integral|matrix|probability|equation)\b'
+    if re.search(math_triggers, user_input, re.I):
+        print("\n[Math Agent Activated]")
+        return math_expert(user_input)
+    return None
+
+def teach_module(module, progress):
+    # System prompt configuration
+    if module["type"] == "math":
+        system_prompt = f"""Teach {module['topic']} as a mathematics professor:
+- Formal definitions and theorems
+- Step-by-step problem solving
+- Mathematical notation using $$ 
+- Practice problems with solutions"""
+    else:
+        system_prompt = f"""Teach {module['topic']} as an ML expert:
+- Practical applications
+- Mathematical foundations
+- Code examples
+- Industry best practices"""
+        
+        if module["quiz"]:
+            system_prompt += "\n- End with 1 quiz question (multiple-choice) and reveal answer after response"
+
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": "Explain this topic comprehensively"}
+    ]
+
+    quiz_asked = False
+    
+    while True:
+        response = generate_response(messages)
+        print(f"\nTeacher: {response}")
+        
+        # Check for quiz question in ML modules
+        if module["type"] == "ml" and "?" in response and not quiz_asked:
+            quiz_asked = True
+            user_input = input("\nYour answer (or type 'help'): ")
+            
+            if user_input.lower() == "help":
+                help_response = generate_response([
+                    {"role": "system", "content": "Provide a hint for the quiz question"},
+                    {"role": "user", "content": response}
+                ])
+                print(f"\nHint: {help_response}")
+                continue
+            
+            print(f"\nCorrect Answer: {response.split('Correct Answer:')[-1].strip()}")
+            continue
+
+        user_input = input("\nYou (/math for help, next to continue): ")
+        
+        if user_input.lower() == "exit":
+            return False
+        elif user_input.lower() == "next":
+            return True
+        elif user_input.startswith("/math"):
+            math_response = math_expert(user_input[5:].strip())
+            print(f"\nMath Expert:\n{math_response}")
+        else:
+            math_response = handle_math_input(user_input)
+            if math_response:
+                print(f"\nMath Expert:\n{math_response}")
+                continue
+                
+            messages.append({"role": "assistant", "content": response})
+            messages.append({"role": "user", "content": user_input})
+
+def main():
+    progress = load_progress()
+    print("ML Learning Platform with Integrated Mathematics Expert\n")
+    
+    while progress["current_module"] < len(CURRICULUM):
+        module = CURRICULUM[progress["current_module"]]
+        
+        print(f"\n{'='*30}")
+        print(f"Module {module['module']}: {module['topic']}")
+        print(f"Type: {'ML' if module['type'] == 'ml' else 'Mathematics'}")
+        print(f"Learning Outcomes: {', '.join(module['learning_outcomes'])}")
+        print(f"{'='*30}")
+        
+        if not teach_module(module, progress):
+            break
+            
+        progress["current_module"] += 1
+        save_progress(progress)
+    
+    print("\nCurriculum completed! Use '/math' anytime for math assistance.")
+
+if __name__ == "__main__":
+    main()
