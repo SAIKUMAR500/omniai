@@ -49,6 +49,6 @@ TWILIO_TOKEN=your_twilio_token
 SERPAPI_KEY=your_serpapi_key
 OPENWEATHER_KEY=your_weather_key
 NEWSAPI_KEY=your_newsapi_key
-
+'''bash
 🖥 Usage Examples
 Basic Commands
