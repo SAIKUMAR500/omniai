@@ -135,6 +135,20 @@ GPT-4 usage may incur OpenAI costs
 
 📄 License
 MIT License - See LICENSE for full text
+Configuration
+Create .env file with:
+
+**ini** 
+- OPENAI_API_KEY=your_key_here
+- TWILIO_SID=your_twilio_sid
+- TWILIO_TOKEN=your_twilio_token
+- SERPAPI_KEY=your_serpapi_key
+- OPENWEATHER_KEY=your_weather_key
+- NEWSAPI_KEY=your_newsapi_key
+'''bash
+
+
+
 ### Prerequisites
 ```bash
 brew install python@3.8  # MacOS Python setup
@@ -144,19 +158,6 @@ source omniai-env/bin/activate
 git clone https://github.com/yourusername/OmniAI-Assistant.git
 cd OmniAI-Assistant
 pip install -r requirements.txt
-
-Configuration
-Create .env file with:
-
-ini
-OPENAI_API_KEY=your_key_here
-TWILIO_SID=your_twilio_sid
-TWILIO_TOKEN=your_twilio_token
-SERPAPI_KEY=your_serpapi_key
-OPENWEATHER_KEY=your_weather_key
-NEWSAPI_KEY=your_newsapi_key
-'''bash
-
 
 
 
