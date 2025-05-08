@@ -56,7 +56,7 @@
 - 📱 Added Twilio SMS integration
 
 **Technical Highlight:**
-```python
+python
 # Code Execution Safety
 def safe_execute(code):
     with tempfile.NamedTemporaryFile() as tmp:
