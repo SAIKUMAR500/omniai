@@ -50,3 +50,5 @@ SERPAPI_KEY=your_serpapi_key
 OPENWEATHER_KEY=your_weather_key
 NEWSAPI_KEY=your_newsapi_key
 
+🖥 Usage Examples
+Basic Commands
