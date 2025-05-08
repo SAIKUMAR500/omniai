@@ -32,11 +32,11 @@
 *(days 1-3)*
 Key Focus: Core Architecture & Basic Features
 
--✅ Established project structure with modular design
--🛠 Implemented CLI interface with Colorama/PyFiglet
--🤖 Integrated OpenAI GPT-3.5-turbo for basic NLP
--📊 Built foundational data analysis module (Pandas/Matplotlib)
--⚙️ Basic command parsing system
+# ✅ Established project structure with modular design
+# -🛠 Implemented CLI interface with Colorama/PyFiglet
+# -🤖 Integrated OpenAI GPT-3.5-turbo for basic NLP
+# -📊 Built foundational data analysis module (Pandas/Matplotlib)
+# -⚙️ Basic command parsing system
 
 --Challenges Overcome:
 
