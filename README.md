@@ -1,78 +1,64 @@
-##🚀 OmniAI Assistant: Multi-Modal Intelligent Agent###
-Python Version
-License
-API Integration
+🚀 OmniAI Assistant: Multi-Modal Intelligent Agent
+Your All-in-One AI-Powered Swiss Army Knife for Digital Productivity.
 
-Your All-in-One AI-Powered Swiss Army Knife for Digital Productivity
-
-🌟 Featured Capabilities
+🌟 Key Features
 🎮 Entertainment Center
 Rock-Paper-Scissors-Lizard-Spock 🤖
-
 Intelligent Number Guesser 🔢
-
 AI Trivia Challenge 🧠
-
 Real-time Player Statistics 📈
-
 📊 Data Analysis Suite
-Automated Dataset Analysis (Iris/Diabetes/Breast Cancer)
-
+Automated Dataset Analysis (e.g., Iris, Diabetes, Breast Cancer)
 Machine Learning Modeling (Classification & Regression)
-
 Interactive Visualizations (Heatmaps, Distributions)
-
 Feature Correlation Analysis 🔍
-
 🌐 Smart Services Integration
 Real-time Weather Forecasts 🌦️
-
 Global News Aggregator 📰
-
 Secure SMS Messaging 📱
-
 Web Search Automation 🔎
-
 💻 Developer Tools
 AI Code Generation (Python) 🐍
-
 Safe Code Execution Environment 🔒
-
 Syntax Highlighting & Auto-Formatting ✨
-
 One-Click Code Testing ✅
+🛠️ Installation
+Clone the repository
 
-# Clone repository
-git clone https://github.com/yourusername/OmniAI-Assistant.git
-cd OmniAI-Assistant
+bash
+git clone https://github.com/SAIKUMAR500/omniai.git
+cd omniai
+Install dependencies
 
-# Install dependencies
+bash
 pip install -r requirements.txt
+Configure API keys
+Create a .env file in the root directory and add the following:
 
-# Configure API keys (create .env file)
-echo "OPENAI_API_KEY=your_openai_key_here" > .env
-echo "TWILIO_SID=your_twilio_sid" >> .env
-echo "TWILIO_TOKEN=your_twilio_token" >> .env
-echo "SERPAPI_KEY=your_serpapi_key" >> .env
-echo "OPENWEATHER_KEY=your_weather_key" >> .env
-echo "NEWSAPI_KEY=your_newsapi_key" >> .env
-
-
+env
+OPENAI_API_KEY=your_openai_key_here
+TWILIO_SID=your_twilio_sid
+TWILIO_TOKEN=your_twilio_token
+SERPAPI_KEY=your_serpapi_key
+OPENWEATHER_KEY=your_weather_key
+NEWSAPI_KEY=your_newsapi_key
 🚦 Getting Started
+Run the application
+
 bash
 python main.py
-text
-🌟 Welcome to OmniAI Assistant 10.0! 🌟
+Try these commands:
 
-🔍 Try these commands:
-1. "weather Tokyo" 🌆
-2. "news artificial intelligence" 📡
-3. "generate code flask REST API" 💻
-4. "play games" 🎮
-5. "analyze diabetes dataset" 📊
+weather Tokyo 🌆
+news artificial intelligence 📡
+generate code flask REST API 💻
+play games 🎮
+analyze diabetes dataset 📊
 📚 Core Functionality Examples
 🔍 Smart Web Search
-python
+Command:
+
+Python
 "search latest AI research papers"
 Output:
 
@@ -81,20 +67,24 @@ text
 2. [Nature] Quantum Machine Learning Breakthrough
 3. [MIT News] Neuromorphic Computing Advances
 📈 Data Analysis Demo
-python
+Command:
+
+Python
 "analyze breast cancer dataset"
 Output:
 
 text
-📊 Feature Correlation Matrix Displayed
-📈 Class Distribution Visualization
+📊 Feature Correlation Matrix Displayed  
+📈 Class Distribution Visualization  
 🤖 Model Accuracy: 96.7% (RandomForest)
 💻 Code Generation
-python
+Command:
+
+Python
 "generate code web scraper using BeautifulSoup"
 Output:
 
-python
+Python
 import requests
 from bs4 import BeautifulSoup
 
@@ -110,48 +100,24 @@ if __name__ == '__main__':
     result = scrape_url('https://example.com')
     print(result)
 🧩 System Architecture
-Diagram
-Code
-
-
-
-
-
-
-
-
-
+[Insert system architecture diagram here if available]
 
 📦 Technology Stack
-Core Framework
-Python
-
-Machine Learning
-Scikit-learn
-Pandas
-Matplotlib
-
-APIs & Services
+Core Framework: Python
+Machine Learning: Scikit-learn, Pandas, Matplotlib
+APIs & Services:
 OpenAI GPT-4
 Twilio
 NewsAPI
-
+OpenWeatherMap
+SerpAPI
 📜 License & Acknowledgments
-MIT License - See LICENSE for details
-
-API Credits
-
-OpenAI GPT-4 Language Model
-
-Twilio SMS Services
-
-OpenWeatherMap Data
-
-NewsAPI.org Feeds
-
-SerpAPI Web Search
-
-Disclaimer: This project uses multiple third-party APIs that may have associated costs. Users are responsible for monitoring their own API usage.
-
-
+License: MIT License - See LICENSE for details.
+API Credits:
+OpenAI GPT-4
+Twilio
+OpenWeatherMap
+NewsAPI.org
+SerpAPI
+🚨 Disclaimer: This project uses multiple third-party APIs that may have associated costs. Users are responsible for monitoring their own API usage.
 
